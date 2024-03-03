@@ -13,6 +13,7 @@ export const options = {
   },
 };
 
+// it was running on cluster node through NodePort
 const BASE_URL = "http://0.0.0.0:30466";
 
 function getStatus(key, expectedValue, traceId) {

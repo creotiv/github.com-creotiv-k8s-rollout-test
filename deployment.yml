@@ -14,7 +14,7 @@ spec:
     spec:
       # This parameter ensures that the node will not shut down while it 
       # still has running connections to handle.
-      terminationGracePeriodSeconds: 10
+      terminationGracePeriodSeconds: 5
       containers:
         - name: k8s-rollout-test
           image: "k8s-rollout-test:0.0.1"
@@ -29,9 +29,24 @@ spec:
             timeoutSeconds: 2
             successThreshold: 1
             failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 1
+            periodSeconds: 1
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          # This gives ability to handle in-flight requests in parallel with 
+          # SIGTERM call
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 5"]
           env:
             - name: RANDOM
-              value: "3"
+              value: "1"
 ---
 kind: Service
 apiVersion: v1
